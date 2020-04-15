@@ -10,7 +10,10 @@ def train(model, trainloader, optimizer, device, criterion, epoch, args):
     running_loss = 0.0  #epoch毎の誤差合計
 
     for i, (inputs, labels) in enumerate(trainloader):
-        outputs, loss = inputs.to(device), labels.to(device)
+        inputs, labels = inputs.to(device), labels.to(device)
+        #出力計算
+        outputs = model(inputs)
+        loss = criterion(outputs, labels)
 
         #Accuracy計算用素材
         _, predicted = torch.max(outputs.data, 1)

@@ -40,15 +40,18 @@ def main():
     parser.add_argument("--modelname", type=str, default="bestmodel.pth", help="保存モデル名")
     parser.add_argument("--csv_path", type=str, default="rider-dataset/splits", help="csv_splitまでのパス")
     parser.add_argument("--root_dir", type=str, default="rider-dataset", help="データセットまでのパス")
-    
+    parser.add_argument("--save_dir", type=str, default="results", help="データセットまでのパス")
+
     args = parser.parse_args()
 
     device = torch.device("cuda:{}".format(args.gpu))   #GPUの設定
 
     #画像を正規化する関数の定義
+    """
     transform = transforms.Compose(
-        [transforms.RandomHorizontalFlip(),
-            transforms.ToTensor()])
+        [transforms.RandomHorizontalFlip()])
+    """
+    transform = None
 
     """
     データセットの読み込み 初回はデータセットをダウンロードするためネットにつながっている必要あり
@@ -58,21 +61,21 @@ def main():
     shuffleは画像をランダムに並び替えるかの設定 test時はオフ
     num_workersはCPU使用数みたいなもの 気にしないで良い
     """
-    trainset = RiderDataset(csv_file=os.path.join(args.csv_file,
+    trainset = RiderDataset(csv_file=os.path.join(args.csv_path,
                             "train_{}.csv".format(args.split)),
                             root_dir=args.root_dir,
                             transform=transform)
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=args.batchsize,
                                             shuffle=True, num_workers=args.num_worker)
 
-    valset = RiderDataset(csv_file=os.path.join(args.csv_file,
+    valset = RiderDataset(csv_file=os.path.join(args.csv_path,
                             "val_{}.csv".format(args.split)),
                             root_dir=args.root_dir,
                             transform=transform)
     valloader = torch.utils.data.DataLoader(valset, batch_size=args.batchsize,
                                             shuffle=False, num_workers=args.num_worker)
     
-    testset = RiderDataset(csv_file=os.path.join(args.csv_file,
+    testset = RiderDataset(csv_file=os.path.join(args.csv_path,
                             "test_{}.csv".format(args.split)),
                             root_dir=args.root_dir,
                             transform=transform)
@@ -118,7 +121,7 @@ def main():
 
         #validationの成績が良ければモデルを保存
         if val_accuracy > max_acc:
-            torch.save(net.state_dict(), args.modelname)
+            torch.save(net.state_dict(), os.path.join(args.save_dir, args.modelname))
 
     print('Finished Training')
 

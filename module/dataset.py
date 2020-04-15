@@ -25,11 +25,14 @@ class RiderDataset(torch.utils.data.Dataset):
         self.label_data = []
 
         for data in csv.reader(csvfile):
-            print(data)
-            img = Image.open(os.path.join(root_dir, data[0]))
+            img = Image.open(os.path.join(root_dir, data[0])).convert("RGB")
             img = img.resize(size)
+            img = np.array(img)
+            img = np.transpose(img, (2, 0, 1))
+            img = img / 255.0
+            img = torch.from_numpy(img).type(torch.FloatTensor)
             self.img_data.append(img)
-            self.label_data.append(data[1])
+            self.label_data.append(int(data[1]))
 
         csvfile.close()
         print("loaded {} images!".format(len(self.label_data)))
@@ -43,7 +46,6 @@ class RiderDataset(torch.utils.data.Dataset):
 
         if self.transform:
             img = self.transform(img)
-        
         return img, label
 
 if __name__ == "__main__":
