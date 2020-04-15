@@ -1,0 +1,1 @@
+python3 tutorial_cifar10.py -g 0 -e 3 -b 4
