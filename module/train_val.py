@@ -10,7 +10,7 @@ def train(model, trainloader, optimizer, device, criterion, epoch, args):
     running_loss = 0.0  #epoch毎の誤差合計
 
     for i, (inputs, labels) in enumerate(trainloader):
-        outputs, loss = 
+        outputs, loss = inputs.to(device), labels.to(device)
 
         #Accuracy計算用素材
         _, predicted = torch.max(outputs.data, 1)
@@ -51,8 +51,8 @@ def validation(model, valloader, device, criterion, args):
 
     return accuracy
 
-def test(model, device, dataloader, args):
-    modell.eval()
+def test(model, device, dataloader, args, classes):
+    model.eval()
 
     class_correct = list(0. for i in range(10))
     class_total = list(0. for i in range(10))

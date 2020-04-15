@@ -9,6 +9,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import argparse
+import os
 
 import torch
 import torchvision
@@ -126,7 +127,7 @@ def main():
     """
     net.load_state_dict(torch.load(args.modelname))
 
-    test(net, device, dataloader, args)
+    test(net, device, testloader, args, classes)
 
 if __name__ == "__main__":
     main()
